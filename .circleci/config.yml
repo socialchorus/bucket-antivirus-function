@@ -19,7 +19,7 @@ jobs:
       # Checkout the code from git
       - checkout
       - attach_workspace:
-          at: /app
+          at: /opt
       ########################################################################
       # Caches are built using multiple layers to have more chances to hit
       # a previously saved cache.
@@ -38,7 +38,7 @@ jobs:
       TERM: xterm
     steps:
       - attach_workspace:
-          at: /app
+          at: /opt
       - run:
           name: Download Helm Projects
           command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
