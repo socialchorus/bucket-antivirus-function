@@ -14,7 +14,8 @@ executors:
 
 jobs:
   build:
-    image: amazonlinux:latest
+    docker:
+      - image: amazonlinux:latest
     steps:
       # Checkout the code from git
       - checkout
