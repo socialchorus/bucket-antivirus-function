@@ -26,7 +26,7 @@ jobs:
       ########################################################################
       - run:
           name: build zip file 
-          command: yum install yum-utils -y && bash -x build_lambda.sh
+          command: yum install python-pip json-c yum-utils -y && bash -x build_lambda.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -64,7 +64,7 @@ jobs:
           name: Add s3 events
           command: |
             source /root/.aws_environment
-            source profile 
+            source profile
             cd /opt/socialchorus/helm/k8comp/
             k8comp -a $S3_BUCKET_EVENTS -n $EU_NAMESPACE -e $ENVIRONMENT | tail -n +2 > variables.tf
             terraform init
