@@ -35,9 +35,6 @@ jobs:
       - run:
           name: build zip file 
           command: bash -x build_lambda.sh
-      - run:
-          name: lists file
-          command: ls -la && ls -al /opt/app/build && ls -al /app
       - persist_to_workspace:
           root: .
           paths:
@@ -62,9 +59,7 @@ jobs:
           name: Copy zip to terraform
           command: |
             source /root/.aws_environment
-            ls -la
-            ln -s /app /opt/app/build/
-            cp lambda.zip /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
+            cp /opt/app/build/lambda.zip /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
             cp variables.tf /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
       - run:
           name: install lambda
