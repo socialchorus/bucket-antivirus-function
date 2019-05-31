@@ -28,7 +28,7 @@ jobs:
       - run:
           name: setup dependencies
           command: |
-            yum install python-pip json-c yum-utils https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y 
+            yum install tar python-pip json-c yum-utils https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y 
             mkdir -p /opt/app/build/ 
             ln -s /app /opt/app/build/
             mkdir -p env/lib/python2.7
