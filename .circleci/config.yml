@@ -36,7 +36,7 @@ jobs:
           command: bash -x build_lambda.sh
       - run:
           name: copy file zip to app
-          command: cp -a /opt/app/build/lambda.zip /app
+          command: cp /opt/app/build/lambda.zip /app
       - persist_to_workspace:
           root: .
           paths:
@@ -56,6 +56,7 @@ jobs:
           name: Build EU Helm Templates
           command: |
             source /root/.aws_environment
+            ls -la
             k8comp -a $CIRCLE_PROJECT_REPONAME -n $EU_NAMESPACE -e $ENVIRONMENT | grep -v '\---' | grep -v '\--' > variables.tf
             k8comp -a $CIRCLE_PROJECT_REPONAME -n $EU_NAMESPACE -e $ENVIRONMENT | grep -v '\---' | grep '\--' | sed 's/--//' > profile
       - run:
@@ -64,6 +65,7 @@ jobs:
             source /root/.aws_environment
             cp lambda.zip /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
             cp variables.tf /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
+            ls -la /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
       - run:
           name: install lambda
           command: |
