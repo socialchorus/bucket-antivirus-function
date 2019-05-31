@@ -64,7 +64,7 @@ jobs:
           name: Add s3 events
           command: |
             source /root/.aws_environment
-            source profile
+            source profile 
             cd /opt/socialchorus/helm/k8comp/
             k8comp -a $S3_BUCKET_EVENTS -n $EU_NAMESPACE -e $ENVIRONMENT | tail -n +2 > variables.tf
             terraform init
