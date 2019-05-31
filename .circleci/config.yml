@@ -29,12 +29,14 @@ jobs:
           command: |
             yum install python-pip json-c yum-utils https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y 
             mkdir -p /opt/app/build/ 
-            ln -s /app /opt/app/build/
             mkdir -p env/lib/python2.7
             ln -s /usr/lib/python2.7/site-packages env/lib/python2.7/site-packages
       - run:
           name: build zip file 
           command: bash -x build_lambda.sh
+      - run:
+          name: copy file zip to app
+          command: cp -a /opt/app/build/lambda.zip /app
       - persist_to_workspace:
           root: .
           paths:
@@ -59,7 +61,7 @@ jobs:
           name: Copy zip to terraform
           command: |
             source /root/.aws_environment
-            cp /opt/app/build/lambda.zip /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
+            cp lambda.zip /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
             cp variables.tf /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
       - run:
           name: install lambda
