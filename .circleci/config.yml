@@ -14,7 +14,7 @@ executors:
 
 jobs:
   build:
-    executor: base
+    image: amazonlinux:latest
     steps:
       # Checkout the code from git
       - checkout
@@ -59,6 +59,7 @@ jobs:
           name: Copy zip to terraform
           command: |
             source /root/.aws_environment
+            ls -la
             cp lambda.zip /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
             cp variables.tf /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
       - run:
