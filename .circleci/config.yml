@@ -1,17 +1,87 @@
-version: 2
+version: 2.1
+
+orbs:
+  aws-ecr: circleci/aws-ecr@3.0.0
+
+executors:
+  base:
+    environment:
+      AWS_ECR_ACCOUNT_URL: 644921559645.dkr.ecr.us-east-1.amazonaws.com
+      AWS_REGION: us-east-1
+    working_directory: /app
+    docker:
+      - image: $AWS_ECR_ACCOUNT_URL/base:latest
+
 jobs:
   build:
-    working_directory: ~/src
-    docker:
-      - image: docker:17.05.0-ce
+    executor: base
     steps:
-      - setup_remote_docker:
-          reusable: true    # default - false
-          exclusive: true   # default - true
-      - run:
-          name: Dependencies
-          command: apk add --no-cache make git curl openssh
+      # Checkout the code from git
       - checkout
+      - attach_workspace:
+          at: /app
+      ########################################################################
+      # Caches are built using multiple layers to have more chances to hit
+      # a previously saved cache.
+      ########################################################################
       - run:
-          name: Build
-          command: make archive
+          name: build zip file 
+          command: yum install yum-utils -y && bash -x build_lambda.sh
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  deploy-eu:
+    executor: base
+    environment:
+      TERM: xterm
+    steps:
+      - attach_workspace:
+          at: /app
+      - run:
+          name: Download Helm Projects
+          command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
+      - run:
+          name: Build EU Helm Templates
+          command: |
+            source /root/.aws_environment
+            k8comp -a $CIRCLE_PROJECT_REPONAME -n $EU_NAMESPACE -e $ENVIRONMENT | tail -n +2 > variables.tf
+      - run:
+          name: Copy zip to terraform
+          command: |
+            source /root/.aws_environment
+            cp lambda.zip /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
+            cp variables.tf /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
+      - run:
+          name: install lambda
+          command: |
+            source /root/.aws_environment
+            cd /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
+            terraform init
+            terraform apply -auto-approve
+      - run:
+          name: Add s3 events
+          command: |
+            source /root/.aws_environment
+            source profile
+            cd /opt/socialchorus/helm/k8comp/
+            k8comp -a $S3_BUCKET_EVENTS -n $EU_NAMESPACE -e $ENVIRONMENT | tail -n +2 > variables.tf
+            terraform init
+            terraform apply -auto-approve
+            
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          context: secrets
+      - deploy-eu:
+          context: eu-secrets
+          filters:
+            branches:
+              only:
+                #- master
+                - devops
+          requires:
+            - build
