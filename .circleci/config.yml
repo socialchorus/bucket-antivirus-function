@@ -35,6 +35,9 @@ jobs:
       - run:
           name: build zip file 
           command: bash -x build_lambda.sh
+      - run:
+          name: lists file
+          command: ls -la && ls -al /opt/app/build && ls -al /app
       - persist_to_workspace:
           root: .
           paths:
