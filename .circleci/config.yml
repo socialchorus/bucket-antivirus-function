@@ -56,7 +56,6 @@ jobs:
           name: Build EU Helm Templates
           command: |
             source /root/.aws_environment
-            ls -la
             k8comp -a $CIRCLE_PROJECT_REPONAME -n $EU_NAMESPACE -e $ENVIRONMENT | grep -v '\---' | grep -v '\--' > variables.tf
             k8comp -a $CIRCLE_PROJECT_REPONAME -n $EU_NAMESPACE -e $ENVIRONMENT | grep -v '\---' | grep '\--' | sed 's/--//' > profile
       - run:
@@ -65,13 +64,11 @@ jobs:
             source /root/.aws_environment
             cp lambda.zip /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
             cp variables.tf /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
-            ls -la /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
       - run:
           name: install lambda
           command: |
             source /root/.aws_environment
             cd /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
-            cat variables.tf
             terraform init
             terraform apply -auto-approve
       - run:
