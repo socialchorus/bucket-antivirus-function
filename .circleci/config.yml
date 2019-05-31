@@ -26,7 +26,7 @@ jobs:
       ########################################################################
       - run:
           name: build zip file 
-          command: yum install python-pip json-c yum-utils -y && bash -x build_lambda.sh
+          command: yum install python-pip json-c yum-utils https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y && bash -x build_lambda.sh
       - persist_to_workspace:
           root: .
           paths:
