@@ -19,14 +19,20 @@ jobs:
       # Checkout the code from git
       - checkout
       - attach_workspace:
-          at: /opt
+          at: /app
       ########################################################################
       # Caches are built using multiple layers to have more chances to hit
       # a previously saved cache.
       ########################################################################
       - run:
+          name: setup dependencies
+          command: |
+            yum install python-pip json-c yum-utils https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y 
+            mkdir -p /opt/app/build/ 
+            ln -s /app /opt/app/build/
+      - run:
           name: build zip file 
-          command: yum install python-pip json-c yum-utils https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y && bash -x build_lambda.sh
+          command: bash -x build_lambda.sh
       - persist_to_workspace:
           root: .
           paths:
@@ -38,7 +44,7 @@ jobs:
       TERM: xterm
     steps:
       - attach_workspace:
-          at: /opt
+          at: /app
       - run:
           name: Download Helm Projects
           command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
