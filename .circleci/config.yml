@@ -130,6 +130,8 @@ workflows:
             branches:
               only:
                 - master
+          requires:
+            - build
       - deploy-eu:
           context: eu-secrets
           filters:
