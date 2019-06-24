@@ -33,7 +33,7 @@ jobs:
             ln -s /usr/lib/python2.7/site-packages env/lib/python2.7/site-packages
       - run:
           name: build zip file 
-          command: bash -x build_lambda.sh
+          command: make
       - run:
           name: copy file zip to app
           command: cp /opt/app/build/lambda.zip /app
