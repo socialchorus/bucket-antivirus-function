@@ -91,7 +91,7 @@ jobs:
           name: Download Helm Projects
           command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
       - run:
-          name: Build EU Helm Templates
+          name: Build US Helm Templates
           command: |
             source /root/.aws_environment
             k8comp -a $CIRCLE_PROJECT_REPONAME -n us-east-1-prod-sc -e $ENVIRONMENT | grep -v '\---' | grep -v '\--' > variables.tf
