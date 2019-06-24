@@ -80,19 +80,61 @@ jobs:
             k8comp -a $S3_BUCKET_EVENTS -n $EU_NAMESPACE -e $ENVIRONMENT | tail -n +2 > variables.tf
             terraform init
             terraform apply -auto-approve
-            
+  deploy-us:
+    executor: base
+    environment:
+      TERM: xterm
+    steps:
+      - attach_workspace:
+          at: /app
+      - run:
+          name: Download Helm Projects
+          command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
+      - run:
+          name: Build EU Helm Templates
+          command: |
+            source /root/.aws_environment
+            k8comp -a $CIRCLE_PROJECT_REPONAME -n us-east-1-prod-sc -e $ENVIRONMENT | grep -v '\---' | grep -v '\--' > variables.tf
+            k8comp -a $CIRCLE_PROJECT_REPONAME -n us-east-1-prod-sc -e $ENVIRONMENT | grep -v '\---' | grep '\--' | sed 's/--//' > profile
+      - run:
+          name: Copy zip to terraform
+          command: |
+            source /root/.aws_environment
+            cp lambda.zip /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
+            cp variables.tf /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
+      - run:
+          name: install lambda
+          command: |
+            source /root/.aws_environment
+            cd /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
+            terraform init
+            terraform apply -auto-approve
+      - run:
+          name: Add s3 events
+          command: |
+            source /root/.aws_environment
+            source profile
+            cd /opt/socialchorus/helm/k8comp/
+            k8comp -a $S3_BUCKET_EVENTS -n us-east-1-prod-sc -e $ENVIRONMENT | tail -n +2 > variables.tf
+            terraform init
+            terraform apply -auto-approve            
 workflows:
   version: 2
   build:
     jobs:
       - build:
           context: secrets
+      - deploy-us:
+          context: secrets
+          filters:
+            branches:
+              only:
+                - master
       - deploy-eu:
           context: eu-secrets
           filters:
             branches:
               only:
-                #- master
-                - devops
+                - master
           requires:
             - build
