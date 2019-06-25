@@ -64,7 +64,6 @@ jobs:
           name: Build EU Helm Templates
           command: |
             source /root/.aws_environment
-            ls -la /app
             k8comp -a $CIRCLE_PROJECT_REPONAME -n $EU_NAMESPACE -e $ENVIRONMENT | grep -v '\---' | grep -v '\--' > variables.tf
             k8comp -a $CIRCLE_PROJECT_REPONAME -n $EU_NAMESPACE -e $ENVIRONMENT | grep -v '\---' | grep '\--' | sed 's/--//' > profile
       - run:
