@@ -141,8 +141,8 @@ workflows:
           filters:
             branches:
               only:
-                #- master
-                - devops
+                - master
+                #- devops
           requires:
             - build
       - deploy-eu:
@@ -150,7 +150,7 @@ workflows:
           filters:
             branches:
               only:
-                #- master
-                - devops
+                - master
+                #- devops
           requires:
             - build
