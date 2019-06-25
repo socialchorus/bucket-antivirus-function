@@ -14,12 +14,12 @@ executors:
 
 jobs:
   build:
-    #working_directory: ~/src
+    working_directory: /app
     docker:
       - image: docker:17.05.0-ce
     steps:
-      - attach_workspace:
-          at: /app
+      #- attach_workspace:
+      #    at: /app
       ########################################################################
       # Caches are built using multiple layers to have more chances to hit
       # a previously saved cache.
