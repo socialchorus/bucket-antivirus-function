@@ -14,12 +14,12 @@ executors:
 
 jobs:
   build:
-    working_directory: ~/src
+    #working_directory: ~/src
     docker:
       - image: docker:17.05.0-ce
     steps:
-      #- attach_workspace:
-      #    at: /app
+      - attach_workspace:
+          at: /app
       ########################################################################
       # Caches are built using multiple layers to have more chances to hit
       # a previously saved cache.
@@ -59,7 +59,7 @@ jobs:
           at: /app
       - run:
           name: check attach_workspace
-          command: ls -la /app ; ls -la ~/
+          command: ls -la / ; ls -la ~/ ;  df -h ; ls -al 
       - run:
           name: Download Helm Projects
           command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
