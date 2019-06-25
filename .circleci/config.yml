@@ -41,7 +41,7 @@ jobs:
       - checkout
       - run:
           name: Build
-          command: make archive
+          command: make archive && ls -al
       #- run:
       #    name: copy file zip to app
       #    command: cp /opt/app/build/lambda.zip /app
@@ -59,7 +59,7 @@ jobs:
           at: /app
       - run:
           name: check attach_workspace
-          command: ls -la
+          command: ls -la /app ; ls -la ~/
       - run:
           name: Download Helm Projects
           command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
