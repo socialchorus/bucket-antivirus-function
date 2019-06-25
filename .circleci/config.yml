@@ -41,13 +41,13 @@ jobs:
       - checkout
       - run:
           name: Build
-          command: make archive && ls -al
+          command: make
       #- run:
       #    name: copy file zip to app
       #    command: cp /opt/app/build/lambda.zip /app
       - run:
           name: check attach_workspace
-          command: ls -la / ;  df -h ; ls -al /app ; ls -la /opt/app/build
+          command: ls -la / ;  df -h ; ls -al /app ; ls -la /opt/app/ ; ls -la /opt/app/build/lambda.zip
       - persist_to_workspace:
           root: .
           paths:
