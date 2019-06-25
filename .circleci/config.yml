@@ -58,6 +58,9 @@ jobs:
       - attach_workspace:
           at: /app
       - run:
+          name: check attach_workspace
+          command: ls -la
+      - run:
           name: Download Helm Projects
           command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
       - run:
@@ -95,6 +98,9 @@ jobs:
     steps:
       - attach_workspace:
           at: /app
+      - run:
+          name: check attach_workspace
+          command: ls -la
       - run:
           name: Download Helm Projects
           command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
