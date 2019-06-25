@@ -59,7 +59,7 @@ jobs:
           at: /app
       - run:
           name: check attach_workspace
-          command: ls -la / ; ls -la ~/ ;  df -h ; ls -al 
+          command: ls -la / ; ls -la ~/ ;  df -h ; find / -name 'lambda.zip' -print
       - run:
           name: Download Helm Projects
           command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
