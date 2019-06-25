@@ -45,9 +45,6 @@ jobs:
       - run:
           name: copy file zip to app
           command: cp /opt/app/build/lambda.zip /app
-      - run:
-          name: check attach_workspace
-          command: ls -la /app 
       - persist_to_workspace:
           root: .
           paths:
@@ -67,6 +64,7 @@ jobs:
           name: Build EU Helm Templates
           command: |
             source /root/.aws_environment
+            ls -la /app
             k8comp -a $CIRCLE_PROJECT_REPONAME -n $EU_NAMESPACE -e $ENVIRONMENT | grep -v '\---' | grep -v '\--' > variables.tf
             k8comp -a $CIRCLE_PROJECT_REPONAME -n $EU_NAMESPACE -e $ENVIRONMENT | grep -v '\---' | grep '\--' | sed 's/--//' > profile
       - run:
