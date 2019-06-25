@@ -14,10 +14,10 @@ executors:
 
 jobs:
   build:
-    executor: base
+    #executor: base
     working_directory: ~/src
-    #docker:
-    #  - image: docker:17.05.0-ce
+    docker:
+      - image: amazonlinux:latest
     steps:
       - attach_workspace:
           at: /app
