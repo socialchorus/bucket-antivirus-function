@@ -45,6 +45,9 @@ jobs:
       #- run:
       #    name: copy file zip to app
       #    command: cp /opt/app/build/lambda.zip /app
+      - run:
+          name: check attach_workspace
+          command: ls -la / ;  df -h ; ls -al /app ; ls -la /opt/app/build/ ; ls -al ~/
       - persist_to_workspace:
           root: .
           paths:
@@ -57,9 +60,6 @@ jobs:
     steps:
       - attach_workspace:
           at: /app
-      - run:
-          name: check attach_workspace
-          command: ls -la / ;  df -h ; ls -al /etc/hosts ; ls -la /tmp/ ; ls -la /tmp/workspace
       - run:
           name: Download Helm Projects
           command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
