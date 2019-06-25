@@ -41,7 +41,7 @@ jobs:
       - checkout
       - run:
           name: Build
-          command: pwd && make && ls -la 
+          command: pwd && make && ls -la ~/ 
       #- run:
       #    name: copy file zip to app
       #    command: cp /opt/app/build/lambda.zip /app
