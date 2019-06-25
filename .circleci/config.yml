@@ -14,12 +14,11 @@ executors:
 
 jobs:
   build:
-    executor: base
+    #executor: base
+    working_directory: /app
+    docker:
+      - image: amazonlinux:latest
     steps:
-      # Checkout the code from git
-      - checkout
-      - attach_workspace:
-          at: /app
       ########################################################################
       # Caches are built using multiple layers to have more chances to hit
       # a previously saved cache.
@@ -27,13 +26,22 @@ jobs:
       - run:
           name: setup dependencies
           command: |
-            yum install python-pip json-c yum-utils https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y 
+            yum install python-pip json-c yum-utils tar gzip -y
             mkdir -p /opt/app/build/ 
-            mkdir -p env/lib/python2.7
-            ln -s /usr/lib/python2.7/site-packages env/lib/python2.7/site-packages
+            #ln -s /usr/lib/python2.7/site-packages env/lib/python2.7/site-packages
+      - attach_workspace:
+          at: /app
+      # Checkout the code from git
+      - checkout
+      #- setup_remote_docker:
+      #    reusable: true    # default - false
+      #    exclusive: true   # default - true
+      #- run:
+      #    name: Dependencies
+      #    command: apk add --no-cache make git curl openssh
       - run:
-          name: build zip file 
-          command: bash -x build_lambda.sh
+          name: Build
+          command: /bin/bash -c "./build_lambda.sh"
       - run:
           name: copy file zip to app
           command: cp /opt/app/build/lambda.zip /app
@@ -88,6 +96,9 @@ jobs:
       - attach_workspace:
           at: /app
       - run:
+          name: check attach_workspace
+          command: ls -la
+      - run:
           name: Download Helm Projects
           command: ssh-add && git clone git@github.com:socialchorus/helm.git /opt/socialchorus/helm
       - run:
@@ -109,6 +120,7 @@ jobs:
             cd /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME
             terraform init
             terraform apply -auto-approve
+            du -sh /opt/socialchorus/helm/terraform/lambda/$CIRCLE_PROJECT_REPONAME/lambda.zip
       #- run:
       #    name: Add s3 events
       #    command: |
@@ -129,7 +141,8 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                #- master
+                - devops
           requires:
             - build
       - deploy-eu:
@@ -137,6 +150,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                #- master
+                - devops
           requires:
             - build
