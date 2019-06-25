@@ -14,40 +14,40 @@ executors:
 
 jobs:
   build:
-    working_directory: ~/src
-    docker:
-      - image: docker:17.05.0-ce
+    #working_directory: /app
+    #docker:
+    #  - image: docker:17.05.0-ce
     steps:
-      #- attach_workspace:
-      #    at: /app
+      - attach_workspace:
+          at: /app
       ########################################################################
       # Caches are built using multiple layers to have more chances to hit
       # a previously saved cache.
       ########################################################################
-      #- run:
-      #    name: setup dependencies
-      #    command: |
-      #      yum install python-pip json-c yum-utils https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y 
-      #      mkdir -p /opt/app/build/ 
-      #      mkdir -p env/lib/python2.7
-      #      ln -s /usr/lib/python2.7/site-packages env/lib/python2.7/site-packages
-      - setup_remote_docker:
-          reusable: true    # default - false
-          exclusive: true   # default - true
       - run:
-          name: Dependencies
-          command: apk add --no-cache make git curl openssh
+          name: setup dependencies
+          command: |
+            yum install python-pip json-c yum-utils https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm -y 
+            mkdir -p /opt/app/build/ 
+            mkdir -p env/lib/python2.7
+            ln -s /usr/lib/python2.7/site-packages env/lib/python2.7/site-packages
+      #- setup_remote_docker:
+      #    reusable: true    # default - false
+      #    exclusive: true   # default - true
+      #- run:
+      #    name: Dependencies
+      #    command: apk add --no-cache make git curl openssh
       # Checkout the code from git
       - checkout
       - run:
           name: Build
-          command: pwd && make && ls -la ~/ 
-      #- run:
-      #    name: copy file zip to app
-      #    command: cp /opt/app/build/lambda.zip /app
+          command: /bin/bash -c "./build_lambda.sh"
+      - run:
+          name: copy file zip to app
+          command: cp /opt/app/build/lambda.zip /app
       - run:
           name: check attach_workspace
-          command: ls -la ~/src ; ls -la build/ ; ls -la /app
+          command: ls -la /app 
       - persist_to_workspace:
           root: .
           paths:
