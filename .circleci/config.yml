@@ -36,7 +36,7 @@ jobs:
           exclusive: true   # default - true
       - run:
           name: Dependencies
-          command: mkdir -p /opt/app/build && apk add --no-cache make git curl openssh
+          command: apk add --no-cache make git curl openssh
       # Checkout the code from git
       - checkout
       - run:
@@ -47,7 +47,7 @@ jobs:
       #    command: cp /opt/app/build/lambda.zip /app
       - run:
           name: check attach_workspace
-          command: ls -la / ;  df -h ; ls -al /app ; ls -la /opt/app/ ; ls -la /opt/app/build/lambda.zip
+          command: ls -la ~/src ;  df -h ; ls -al /app ; ls -la build/ ; ls -la /opt
       - persist_to_workspace:
           root: .
           paths:
