@@ -17,7 +17,7 @@ jobs:
     #executor: base
     working_directory: /app
     docker:
-      - image: amazonlinux:latest
+      - image: amazonlinux:2
     steps:
       ########################################################################
       # Caches are built using multiple layers to have more chances to hit
