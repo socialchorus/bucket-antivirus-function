@@ -32,6 +32,8 @@ or INFECTED, along with the date and time of the scan.
 
 ## Installation
 
+- Requires Python 3.7
+
 ### Build from Source
 
 To build the archive to upload to AWS Lambda, run `make all`.  The build process is completed using
